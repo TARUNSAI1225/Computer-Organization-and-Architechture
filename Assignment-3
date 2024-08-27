@@ -1,0 +1,113 @@
+1. Write a program in assembly language to perform subtraction of 8-bit data.
+Code:
+org 100h                 ;Start address for the program
+;Define the two 8-bit numbers to add
+num1 db 28h              ;First numbe(hexadecimal)
+num2 db 22h              ;Second number(hexadecimal)
+start:
+    mov al,num1          ;Load the first number into register AL
+    sub al,num2          ;Sub the second nuber to AL
+    ;Result is now in AL
+    ;Convert the result to a printable ASCII value for display  
+    
+    ;Save the result for dispaly
+    mov bl,al
+    ;Convert the upper nibble(4bits) of AL to character
+    mov ah,al
+    and ah,0F0h          ;Mask the lower nibble
+    shr ah,4             ;Shift right by 4 to get the upper nibble                                                   
+
+    add ah,30h           ;Convert to ASCII digit(0-9)
+    cmp ah,39h                                              
+    jle print_first_digit
+    add ah,7             ;Convert to ASCII letter(A-F) if necessary
+print_first_digit:
+    mov dl,ah            ;Move the first digit to DL for printing
+    mov ah,02h            ;BIOS interrupt to display character  
+    int 21h
+    ;Convert the lower nibble of AL to a character
+    mov ah,bl
+    and ah,0Fh           ;Mask the upper nibble
+    add ah,30h           ;Convert to ASCII digit(0-9)
+    cmp ah,39h
+    jle print_second_digit
+    add ah,7             ;Convert to ASCII letter(A-F) of necessary
+    
+print_second_digit:
+    mov dl,ah            ;Move the second digit to DL for printing
+    mov ah,02h           ;BIOS interrupt to display character
+    int 21h
+    
+ret
+
+2. Write an assembly language program to perform subtraction of 16-bit data.
+Code:
+org 100h
+    num1 dw 5743h  ; First 16-bit number
+    num2 dw 1567   h  ; Second 16-bit number
+
+start:
+    ; Load the lower bytes of num1 and num2
+    mov ax, num1    ; Load num1 into AX (AX = 1234h)
+    sub ax, num2     ; Add num2 to AX (AX = AX + num2)
+
+    ; Store the result in BX for later use
+    mov bx, ax         ; Copy AX to BX
+
+    ; Convert upper byte (high 8 bits) to ASCII and display
+    mov al, ah         ; Move the high byte of AX to AL
+    and al, 0F0h       ; Mask the lower nibble
+    shr al, 4          ; Shift right to get the upper nibble
+    add al, 30h        ; Convert to ASCII digit
+    cmp al, 39h        ; Compare with ASCII value of '9'
+    jle print_first_digit
+    add al, 7          ; Convert to ASCII letter if needed
+
+print_first_digit:
+    mov dl, al         ; Move AL to DL for printing
+    mov ah, 02h        ; BIOS interrupt to display character
+    int 21h
+
+    ; Convert lower nibble of the high byte to ASCII and display
+    mov al, bh        ; Move the high byte of BX to AL again
+    and al, 0Fh        ; Mask the upper nibble
+    add al, 30h        ; Convert to ASCII digit
+    cmp al, 39h        ; Compare with ASCII value of '9'
+    jle print_second_digit
+    add al, 7          ; Convert to ASCII letter if needed
+
+print_second_digit:
+    mov dl, al         ; Move AL to DL for printing
+    mov ah, 02h        ; BIOS interrupt to display character
+    int 21h
+
+    ; Convert upper nibble of the low byte to ASCII and display
+    mov al, bl         ; Move the low byte of BX to AL
+    and al, 0F0h       ; Mask the lower nibble
+    shr al, 4          ; Shift right to get the upper nibble
+    add al, 30h        ; Convert to ASCII digit
+    cmp al, 39h        ; Compare with ASCII value of '9'
+    jle print_third_digit
+    add al, 7          ; Convert to ASCII letter if needed
+
+print_third_digit:
+    mov dl, al         ; Move AL to DL for printing
+    mov ah, 02h        ; BIOS interrupt to display character
+    int 21h
+
+    ; Convert lower nibble of the low byte to ASCII and display
+    mov al, bl         ; Move the low byte of BX to AL
+    and al, 0Fh        ; Mask the upper nibble
+    add al, 30h        ; Convert to ASCII digit
+    cmp al, 39h        ; Compare with ASCII value of '9'
+    jle print_fourth_digit
+    add al, 7          ; Convert to ASCII letter if needed
+
+print_fourth_digit:
+    mov dl, al         ; Move AL to DL for printing
+    mov ah, 02h        ; BIOS interrupt to display character
+    int 21h
+
+    ; Terminate the program
+    mov ah, 4Ch
+    int 21h
